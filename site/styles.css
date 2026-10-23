@@ -26,3 +26,31 @@
 .slice-card span{font-size:11px;color:#97a8bb;line-height:1.5}
 @media(max-width:950px){.quality-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.diagnostic-grid{grid-template-columns:1fr}.slice-grid{grid-template-columns:1fr}}
 @media(max-width:480px){.quality-panel{padding:17px}.quality-grid{gap:8px}.quality-grid strong{font-size:18px}.quality-grid>div{padding:12px 9px}.quality-panel .panel-head{align-items:flex-start;gap:9px;flex-wrap:wrap}}
+
+/* Public BTC-USD last-trade panel: independent from historical model report. */
+.market-feed{margin:23px 0 21px;padding:22px 24px;background:linear-gradient(116deg,#13263d 0%,#0d192a 85%);border:1px solid #345270}
+.feed-top{display:flex;justify-content:space-between;align-items:center;gap:20px}
+.feed-heading h2{font-size:21px;letter-spacing:-.55px;margin:10px 0}
+.feed-pair{font-size:12px;color:#9aafd0;margin-left:8px;letter-spacing:0}
+.feed-heading p{font-size:12px;color:#a2b1c7;margin:0;line-height:1.65;max-width:520px}
+.feed-quote{display:flex;flex-direction:column;align-items:flex-end;gap:9px;text-align:right;flex-shrink:0}
+.feed-quote>strong{font-size:clamp(26px,3.5vw,38px);font-weight:750;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.feed-state{display:inline-flex;align-items:center;gap:8px;color:#aec0d8;font-size:11px;font-weight:650}
+.feed-light{width:8px;height:8px;background:#95a6ba;border-radius:100%;display:inline-block}
+.feed-state[data-state="live"]{color:#84dfb2}
+.feed-state[data-state="live"] .feed-light{background:#72d5a0}
+.feed-state[data-state="stale"]{color:#f1bd78}
+.feed-state[data-state="stale"] .feed-light{background:#f1bd78}
+.feed-state[data-state="offline"]{color:#f6a0aa}
+.feed-state[data-state="offline"] .feed-light{background:#f6a0aa}
+.feed-meta{border-top:1px solid #2a4059;padding-top:13px;margin-top:19px;display:flex;flex-wrap:wrap;gap:10px 24px;color:#91a9c3;font-size:10px;letter-spacing:.5px}
+.feed-meta strong{font-weight:650;color:#d2e2f7;letter-spacing:0;margin-left:6px}
+.feed-meta #live-data-age{color:#d2e2f7;font-variant-numeric:tabular-nums;letter-spacing:0}
+.feed-note{margin:14px 0 0;color:#8fa3bd;font-size:11px;line-height:1.65}
+@media(max-width:760px){
+  .market-feed{padding:18px 16px}
+  .feed-top{flex-direction:column;align-items:flex-start;gap:16px}
+  .feed-quote{align-items:flex-start;text-align:left}
+  .feed-quote>strong{font-size:32px}
+  .feed-pair{display:block;margin:7px 0 0}
+}
