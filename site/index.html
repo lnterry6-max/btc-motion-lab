@@ -4,11 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#080f1c" />
-  <meta name="description" content="Observe read-only Bitcoin exchange trades and explore historical 5-, 15-, 30-, and 60-minute price movement research." />
-  <title>Motion / BTC — Bitcoin Market Data &amp; Historical Research</title>
+  <meta name="description" content="Explore Bitcoin's historical 5-, 15-, 30-, and 60-minute price movements with transparent out-of-sample model comparisons." />
+  <title>Motion / BTC — Bitcoin Historical Research</title>
   <link rel="stylesheet" href="./styles.css" />
   <script src="./app.js" defer></script>
-  <script src="./live-market.js" defer></script>
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -17,14 +16,13 @@
       <a class="brand" href="./" aria-label="Motion BTC home"><span class="brand-mark"><span class="brand-icon">₿</span></span><span>motion<span class="brand-dot">.</span><small>BTC RESEARCH</small></span></a>
       <div class="sidebar-group"><div class="sidebar-heading">WORKSPACE</div>
         <a class="nav-link active" href="#overview"><span class="nav-icon">◫</span> Overview</a>
-        <a class="nav-link" href="#market-feed"><span class="nav-icon">◉</span> Exchange price</a>
         <a class="nav-link" href="#distribution"><span class="nav-icon">◧</span> Price movement</a>
         <a class="nav-link" href="#quality"><span class="nav-icon">◈</span> Data quality</a>
         <a class="nav-link" href="#backtest"><span class="nav-icon">◷</span> Model testing</a>
       </div>
       <div class="sidebar-group resource-group"><div class="sidebar-heading">ABOUT</div>
         <a class="nav-link" href="#methodology"><span class="nav-icon">≡</span> Methodology</a>
-        <a class="nav-link" href="https://github.com/lnterry6-max/btc-motion-lab" target="_blank" rel="noopener noreferrer"><span class="nav-icon">↗</span> GitHub</a>
+        <a class="nav-link" href="https://github.com" target="_blank" rel="noopener noreferrer"><span class="nav-icon">↗</span> GitHub</a>
       </div>
       <div class="sidebar-foot"><div class="foot-status"><span class="status-dot"></span> HISTORICAL ANALYTICS</div><p>Transparent statistical research. No live trading or betting signals.</p></div>
     </aside>
@@ -37,25 +35,6 @@
         <section id="overview" class="overview-section">
           <div class="eyebrow"><span class="eyebrow-line"></span> MARKET INTELLIGENCE / HISTORICAL</div>
           <div class="intro-row"><div><h1>Understand the <span class="title-gradient">movement.</span></h1><p class="intro-description">Explore how Bitcoin moved over 5, 15, 30, and 60 minutes in historical data — and see whether models could have anticipated those moves on unseen past candles.</p></div><div class="snapshot-tag"><span class="snapshot-label">REPORT UPDATED</span><strong id="report-updated">Not available yet</strong><span class="snapshot-sub">UTC · Not real-time</span></div></div>
-          <section id="market-feed" class="market-feed panel" aria-labelledby="market-feed-title">
-            <div class="feed-top">
-              <div class="feed-heading">
-                <div class="panel-kicker">PUBLIC EXCHANGE DATA / BTC-USD</div>
-                <h2 id="market-feed-title">Latest Bitcoin trade <span class="feed-pair">Coinbase Exchange</span></h2>
-                <p>Price updates on observed BTC/USD trades while this page stays open. This is one exchange, not a consolidated market price.</p>
-              </div>
-              <div class="feed-quote">
-                <strong id="live-price" aria-label="Last observed Bitcoin trade price in US dollars">—</strong>
-                <span class="feed-state" id="live-status" data-state="connecting" role="status" aria-live="polite"><span class="feed-light" aria-hidden="true"></span><span id="live-status-text">Connecting to Coinbase Exchange</span></span>
-              </div>
-            </div>
-            <div class="feed-meta">
-              <span>EXCHANGE TRADE TIME <strong id="live-trade-time">Awaiting first trade</strong></span>
-              <span id="live-data-age">No trade received yet</span>
-              <span>HISTORICAL RESEARCH <strong>Updated separately, approximately hourly</strong></span>
-            </div>
-            <p class="feed-note">Read-only price observation, not a real-time market forecast. Trade messages can be delayed, missed or disconnected; stale prices are labeled. The historical statistics below do not update with each trade.</p>
-          </section>
           <div class="notice" role="note"><span class="notice-icon">ⓘ</span><span>All figures summarize <strong>past observations</strong>. Dollar amounts are historical percentage changes scaled to the last recorded BTC price — <strong>not future price targets or trading signals.</strong></span></div>
           <section id="quality" class="quality-panel panel" aria-labelledby="quality-title">
             <div class="panel-head"><div><div class="panel-kicker">DATA INTEGRITY</div><h2 id="quality-title">Know what the sample leaves out.</h2></div><span id="quality-status" class="quality-tag">Awaiting report</span></div>
@@ -109,7 +88,7 @@
         </section>
         <section id="methodology" class="methodology"><div class="section-header"><div class="panel-kicker">CLEAR METHODOLOGY</div><h2>Built to show the limits, not hide them.</h2></div><div class="method-grid"><div class="method"><div class="method-number">01 /</div><h3>Only completed candles</h3><p>Fetch recent BTC/USD 5-minute price history, discard unfinished candles and retain missing periods instead of silently skipping them.</p></div><div class="method"><div class="method-number">02 /</div><h3>Actual historical ranges</h3><p>Measure the signed 10th–90th percentile changes and typical absolute moves. Convert percentages to illustrative dollar equivalents at the last close.</p></div><div class="method"><div class="method-number">03 /</div><h3>Separated training & testing</h3><p>Compare Ridge regression and gradient boosting on validation data, then measure results on a later untouched holdout with a gap for overlapping targets.</p></div><div class="method"><div class="method-number">04 /</div><h3>A baseline is mandatory</h3><p>Show zero-movement baseline error and majority-direction baseline accuracy. If a model underperforms, the dashboard says so.</p></div></div><p class="method-disclaimer">Coverage is limited to roughly the latest 60 days of 5-minute data from Yahoo Finance. Market regimes change; short samples and overlapping windows can make apparent patterns unstable. Data can be delayed or incomplete.</p></section>
       </main>
-      <footer class="footer"><span>motion<span class="brand-dot">.</span> / BTC RESEARCH</span><span>Read-only exchange quotes and historical research · No trading or betting integration</span></footer>
+      <footer class="footer"><span>motion<span class="brand-dot">.</span> / BTC RESEARCH</span><span>Historical data only · Not investment advice · No orders or betting integration</span></footer>
     </div>
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>

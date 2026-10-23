@@ -1,14 +1,8 @@
 # Motion / BTC — historical Bitcoin research
 
-A GitHub Pages website showing a **near-real-time, read-only BTC/USD trade price** from Coinbase Exchange alongside Bitcoin's **past** 5, 15, 30, and 60-minute price movements. It shows historical movement sizes (percent and dollar equivalents), distributions, and honestly scored machine-learning **backtests**. **It does not produce current-market forecasts, trade recommendations, betting signals, or execute trades.**
+A polished, static GitHub Pages website for analyzing Bitcoin's **past** 5, 15, 30, and 60-minute price movements. It shows historical movement sizes (percent and dollar equivalents), distributions, and honestly scored machine-learning **backtests**. **It does not produce current-market forecasts, trade recommendations, betting signals, or execute trades.**
 
 ![Static GitHub Pages](https://img.shields.io/badge/host-GitHub%20Pages-395a83) ![Python](https://img.shields.io/badge/analytics-Python-395a83)
-
-## Near-real-time market observation
-
-The website opens a public, unauthenticated WebSocket to Coinbase Exchange (`wss://ws-feed.exchange.coinbase.com`) and subscribes to the BTC-USD `ticker` and `heartbeat` channels. It shows the **last executed exchange trade**, timestamp in UTC, elapsed seconds since that trade, and a connected/recent, stale, or disconnected state. If the connection drops, the client retries with exponential backoff while clearly labeling previously received prices.
-
-This is **not** a consolidated Bitcoin price or a promise of guaranteed data delivery. Exchange trade events and the Yahoo Finance historical report are entirely separate feeds. There are no current-market predictions, trading orders, betting signals or platform integrations.
 
 ## What it measures
 
@@ -32,7 +26,7 @@ This is **not** a consolidated Bitcoin price or a promise of guaranteed data del
 4. Open **Actions → Update historical report and deploy → Run workflow**. If permissions or Pages are disabled on the repo, enable the necessary permissions and retry.
 5. When the workflow finishes successfully, open `https://YOUR-USERNAME.github.io/btc-motion-lab/` (replace YOUR-USERNAME with your actual GitHub username).
 
-The scheduled workflow attempts a historical research update every hour at minute 17. GitHub does **not** guarantee exact execution times. A failed market-data request fails the build rather than publishing made-up values. The last successful site remains deployed.
+The scheduled workflow attempts an update every six hours at minute 37. GitHub does **not** guarantee exact execution times. A failed market-data request fails the build rather than publishing made-up values. The last successful site remains deployed.
 
 ### Push with Git instead of uploading files
 
@@ -73,7 +67,7 @@ python scripts/build_report.py --input-csv history.csv --output site/data/report
 ```
 site/index.html          Static dashboard
 site/styles.css          Responsive design
-site/app.js              Charting + horizon interaction (no external JS dependencies)\nsite/live-market.js      Coinbase Exchange read-only WebSocket ticker and freshness status
+site/app.js              Charting + horizon interaction (no external JS dependencies)
 site/data/report.json    Generated only by the backend; never committed
 scripts/build_report.py  Historical statistics and out-of-sample research
 .github/workflows/deploy.yml  Scheduled build + deploy
