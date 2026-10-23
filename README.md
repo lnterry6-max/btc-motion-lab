@@ -11,6 +11,8 @@ A polished, static GitHub Pages website for analyzing Bitcoin's **past** 5, 15, 
 - Percent of past samples up/down, median absolute change, signed 10th–90th percentiles, and 95th percentile of absolute change.
 - **Illustrative dollar equivalent** = historical percentage movement × latest *observed* Bitcoin close. This is **not a current forecast**.
 - A historical price chart, movement histogram, and replay of held-out model predictions versus actual observed changes.
+- **Data quality:** reject inconsistent OHLC candles, count missing intervals, report coverage, longest gap, and candle age at build time.
+- **Stability diagnostics:** compare older/newer historical movement magnitudes and examine three chronological holdout slices plus error on non-overlapping test targets. These are not independently retrained walk-forward models.
 - A chronological train (first 60%), validation (next 20%), and untouched test (last 20%). Target horizons are purged at split boundaries to avoid future-target leakage. Model choice (Ridge vs gradient boosting) uses **only validation MAE**.
 - Out-of-sample mean absolute error (in percentage points) compared with a simple **predict zero change** baseline, and direction accuracy compared with a **majority-class** baseline. Both positive and negative improvements are displayed transparently.
 
@@ -78,3 +80,6 @@ tests/test_report.py     Offline tests including no-lookahead checks
 If a past 15-minute move had a 90th percentile of +0.4%, this means **90% of measured past 15-minute returns were at or below +0.4%** in this sample. It **does not** mean there is a 90% probability the next 15-minute move will be at or below +0.4%. Historical patterns and price references can become outdated.
 
 This project is for learning data science and evaluating models, not financial, investment, or wagering advice.
+## Interpreting the new quality checks
+
+Data quality is measured when the static report is built; the browser does not turn it into a live feed. Any incomplete OHLC bar is excluded rather than silently used, and missing intervals stay missing. High model accuracy on one past segment can still fail to generalize. Sliced holdout diagnostics and spaced-out evaluation targets help reveal instability; neither predicts the next market move.

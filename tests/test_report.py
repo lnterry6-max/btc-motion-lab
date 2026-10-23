@@ -28,6 +28,23 @@ class HistoricalReportTests(unittest.TestCase):
         self.assertEqual(len(clean), 1800)
         self.assertTrue(clean['Close'].index.is_monotonic_increasing)
 
+    def test_corrupt_ohlc_is_excluded(self):
+        changed = self.raw.copy()
+        t = changed.index[250]
+        changed.loc[t, 'High'] = changed.loc[t, 'Low'] - 10
+        clean = clean_candles(changed, self.now)
+        self.assertTrue(pd.isna(clean.loc[t, 'Close']))
+        self.assertTrue(pd.notna(clean.loc[t + pd.Timedelta(minutes=5), 'Close']))
+
+    def test_quality_counts_gaps(self):
+        changed = self.raw.drop(self.raw.index[400:404])
+        report = build_report(clean_candles(changed, self.now))
+        q = report['quality']
+        self.assertEqual(q['expected_candles'], 1800)
+        self.assertEqual(q['missing_candles'], 4)
+        self.assertEqual(q['longest_missing_gap_minutes'], 20)
+        self.assertLess(q['coverage_percent'], 100)
+
     def test_future_candles_excluded(self):
         clean = clean_candles(self.raw, self.raw.index[-1] + pd.Timedelta(minutes=2))
         self.assertEqual(len(clean), 1799)
@@ -47,6 +64,11 @@ class HistoricalReportTests(unittest.TestCase):
             self.assertIn('model_mae_pct_points', b)
             self.assertIn('zero_move_baseline_mae_pct_points', b)
             self.assertGreater(len(b['replay']), 0)
+            self.assertEqual(len(b['holdout_slices']), 3)
+            self.assertGreater(b['nonoverlapping_holdout_count'], 0)
+            self.assertLessEqual(b['nonoverlapping_holdout_count'], b['holdout_sample_count'])
+            self.assertGreater(data['stability']['older_half']['samples'], 0)
+            self.assertGreater(data['stability']['newer_half']['samples'], 0)
 
     def test_features_do_not_consume_future(self):
         first = indicators(self.raw)

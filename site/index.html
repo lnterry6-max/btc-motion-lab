@@ -17,6 +17,7 @@
       <div class="sidebar-group"><div class="sidebar-heading">WORKSPACE</div>
         <a class="nav-link active" href="#overview"><span class="nav-icon">◫</span> Overview</a>
         <a class="nav-link" href="#distribution"><span class="nav-icon">◧</span> Price movement</a>
+        <a class="nav-link" href="#quality"><span class="nav-icon">◈</span> Data quality</a>
         <a class="nav-link" href="#backtest"><span class="nav-icon">◷</span> Model testing</a>
       </div>
       <div class="sidebar-group resource-group"><div class="sidebar-heading">ABOUT</div>
@@ -35,6 +36,16 @@
           <div class="eyebrow"><span class="eyebrow-line"></span> MARKET INTELLIGENCE / HISTORICAL</div>
           <div class="intro-row"><div><h1>Understand the <span class="title-gradient">movement.</span></h1><p class="intro-description">Explore how Bitcoin moved over 5, 15, 30, and 60 minutes in historical data — and see whether models could have anticipated those moves on unseen past candles.</p></div><div class="snapshot-tag"><span class="snapshot-label">REPORT UPDATED</span><strong id="report-updated">Not available yet</strong><span class="snapshot-sub">UTC · Not real-time</span></div></div>
           <div class="notice" role="note"><span class="notice-icon">ⓘ</span><span>All figures summarize <strong>past observations</strong>. Dollar amounts are historical percentage changes scaled to the last recorded BTC price — <strong>not future price targets or trading signals.</strong></span></div>
+          <section id="quality" class="quality-panel panel" aria-labelledby="quality-title">
+            <div class="panel-head"><div><div class="panel-kicker">DATA INTEGRITY</div><h2 id="quality-title">Know what the sample leaves out.</h2></div><span id="quality-status" class="quality-tag">Awaiting report</span></div>
+            <div class="quality-grid">
+              <div><span>Valid candle coverage</span><strong id="quality-coverage">—</strong></div>
+              <div><span>Missing or invalid candles</span><strong id="quality-missing">—</strong></div>
+              <div><span>Longest data gap</span><strong id="quality-gap">—</strong></div>
+              <div><span>Candle age at report build</span><strong id="quality-age">—</strong></div>
+            </div>
+            <p id="quality-note" class="micro-note">Checks include five-minute coverage and OHLC consistency. Freshness is measured when the report is built, not live in the browser.</p>
+          </section>
           <div class="stats-head"><div><h2>Movement by time horizon</h2><p>Compare typical historical movement, not a future forecast.</p></div><div class="data-window">SOURCE <strong>BTC-USD · 5M CANDLES</strong></div></div>
           <div class="horizon-grid" id="horizon-cards" aria-label="Historical movement summaries">
             <div class="loading-card">Run the GitHub workflow to populate real historical data.</div>
@@ -60,6 +71,20 @@
           <div class="replay-head"><div><h3>Historical replay</h3><p>Model-estimated percentage changes versus what actually happened in the held-out test period.</p></div><span class="replay-key"><span class="key-swatch key-actual"></span> Actual <span class="key-swatch key-modeled"></span> Model</span></div>
           <div id="replay-chart" class="replay-chart" role="img" aria-label="Historical predicted and actual movements from the holdout test"><div class="chart-empty">Historical backtest replay appears here.</div></div>
           <p class="micro-note" id="holdout-dates">Model selection uses a separate validation period. Test results are not a guarantee of future accuracy.</p>
+          <div class="diagnostic-grid">
+            <div class="diagnostic-panel"><h3>Historical movement stability</h3><p>Typical absolute price change in the older and newer halves of the sample.</p>
+              <div class="diagnostic-stats"><div><span>Older half</span><strong id="stability-older">—</strong></div><div><span>Newer half</span><strong id="stability-newer">—</strong></div></div>
+              <p class="micro-note" id="stability-note">Backward-looking comparison only.</p>
+            </div>
+            <div class="diagnostic-panel"><h3>Spaced-out test targets</h3><p>Model error versus the zero-change baseline on non-overlapping test intervals.</p>
+              <div class="diagnostic-stats"><div><span>Model error</span><strong id="independent-model-error">—</strong></div><div><span>Baseline error</span><strong id="independent-baseline-error">—</strong></div></div>
+              <p class="micro-note" id="independent-count">Lower error is better.</p>
+            </div>
+          </div>
+          <div class="holdout-slice-area">
+            <h3>Consistency across the historical holdout</h3><p>Three consecutive slices of one untouched test period, without retraining between slices.</p>
+            <div id="holdout-slices" class="slice-grid"><p class="micro-note">Awaiting report.</p></div>
+          </div>
         </section>
         <section id="methodology" class="methodology"><div class="section-header"><div class="panel-kicker">CLEAR METHODOLOGY</div><h2>Built to show the limits, not hide them.</h2></div><div class="method-grid"><div class="method"><div class="method-number">01 /</div><h3>Only completed candles</h3><p>Fetch recent BTC/USD 5-minute price history, discard unfinished candles and retain missing periods instead of silently skipping them.</p></div><div class="method"><div class="method-number">02 /</div><h3>Actual historical ranges</h3><p>Measure the signed 10th–90th percentile changes and typical absolute moves. Convert percentages to illustrative dollar equivalents at the last close.</p></div><div class="method"><div class="method-number">03 /</div><h3>Separated training & testing</h3><p>Compare Ridge regression and gradient boosting on validation data, then measure results on a later untouched holdout with a gap for overlapping targets.</p></div><div class="method"><div class="method-number">04 /</div><h3>A baseline is mandatory</h3><p>Show zero-movement baseline error and majority-direction baseline accuracy. If a model underperforms, the dashboard says so.</p></div></div><p class="method-disclaimer">Coverage is limited to roughly the latest 60 days of 5-minute data from Yahoo Finance. Market regimes change; short samples and overlapping windows can make apparent patterns unstable. Data can be delayed or incomplete.</p></section>
       </main>

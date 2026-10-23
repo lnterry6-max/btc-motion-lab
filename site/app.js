@@ -176,6 +176,7 @@ function selectHorizon(key) {
     node.setAttribute('aria-pressed',String(selected));
   });
   const {distribution:d,backtest:b}=report.horizons[key];
+  renderDiagnostics(report.horizons[key],b);
   $('percentile-low').textContent=`${pct(d.signed_percentiles.p10,3,true)} / ${dollars(d.signed_usd_equivalent.p10)}`;
   $('median-move').textContent=`${pct(d.median_absolute_percent,3)} / ${dollars(d.median_absolute_usd_equivalent)}`;
   $('percentile-high').textContent=`${pct(d.signed_percentiles.p90,3,true)} / ${dollars(d.signed_usd_equivalent.p90)}`;
@@ -193,12 +194,49 @@ function validateReport(data) {
     Array.isArray(data.chart) && data.horizons && horizons.every(k=>
       data.horizons[k]?.distribution?.histogram?.counts && data.horizons[k]?.backtest);
 }
+function renderQuality(){
+  const q=report.quality;
+  if(!q)return;
+  $('quality-coverage').textContent=pct(q.coverage_percent,2);
+  $('quality-missing').textContent=number(q.missing_candles,0)+' / '+number(q.expected_candles,0);
+  $('quality-gap').textContent=number(q.longest_missing_gap_minutes,0)+' min';
+  $('quality-age').textContent=number(q.latest_candle_age_minutes_at_build,1)+' min';
+  const recent=q.source_status==='recent_at_build';
+  $('quality-status').textContent=recent?'Recent at report build':'Delayed at report build';
+  $('quality-status').dataset.state=recent?'recent':'delayed';
+  $('quality-note').textContent=q.data_checks+'. All readings represent the report-build time, not the current browser time.';
+}
+function renderDiagnostics(h,b){
+  if(h.stability){
+    const s=h.stability;
+    $('stability-older').textContent=pct(s.older_half.median_absolute_pct,3);
+    $('stability-newer').textContent=pct(s.newer_half.median_absolute_pct,3);
+    $('stability-note').textContent=number(s.older_half.samples,0)+' older and '+number(s.newer_half.samples,0)+' newer observed windows. These returns can overlap.';
+  }
+  const holder=$('holdout-slices');holder.replaceChildren();
+  if(b.status==='ok'&&b.nonoverlapping_holdout_count){
+    $('independent-model-error').textContent=pct(b.nonoverlapping_model_mae_pct_points,4);
+    $('independent-baseline-error').textContent=pct(b.nonoverlapping_zero_baseline_mae_pct_points,4);
+    $('independent-count').textContent=number(b.nonoverlapping_holdout_count,0)+' spaced-out held-out targets.';
+    for(const part of b.holdout_slices||[]){
+      const card=document.createElement('div');card.className='slice-card';
+      const title=document.createElement('strong');title.textContent=dateLabel(part.start_utc)+' – '+dateLabel(part.end_utc);
+      const sub=document.createElement('span');sub.textContent='Model '+pct(part.model_mae_pct_points,4)+' · Baseline '+pct(part.zero_baseline_mae_pct_points,4)+' · '+number(part.samples,0)+' windows';
+      card.append(title,sub);holder.append(card);
+    }
+  }else{
+    $('independent-model-error').textContent='—';
+    $('independent-baseline-error').textContent='—';
+    $('independent-count').textContent='Insufficient test data.';
+    holder.textContent='No test slices available.';
+  }
+}
 function render() {
   $('dataset-status').innerHTML='<span class="status-dot" aria-hidden="true"></span> Historical report loaded';
   $('report-updated').textContent=shortTime(report.generated_at_utc);
   $('last-price').textContent=dollars(report.latest_observed_close_usd);
   $('last-time').textContent=shortTime(report.data_end_utc);
-  renderCards();renderTable();drawPrice();selectHorizon(activeHorizon);
+  renderQuality();renderCards();renderTable();drawPrice();selectHorizon(activeHorizon);
 }
 async function main() {
   document.querySelectorAll('.horizon-tab').forEach(btn=>btn.addEventListener('click',()=>selectHorizon(btn.dataset.horizon)));
