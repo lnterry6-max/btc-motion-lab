@@ -234,27 +234,57 @@ function renderDiagnostics(h,b){
 function render() {
   $('dataset-status').innerHTML='<span class="status-dot" aria-hidden="true"></span> Historical report loaded';
   $('report-updated').textContent=shortTime(report.generated_at_utc);
+  updateSnapshotAge();
   $('last-price').textContent=dollars(report.latest_observed_close_usd);
   $('last-time').textContent=shortTime(report.data_end_utc);
   renderQuality();renderCards();renderTable();drawPrice();selectHorizon(activeHorizon);
 }
-async function main() {
-  document.querySelectorAll('.horizon-tab').forEach(btn=>btn.addEventListener('click',()=>selectHorizon(btn.dataset.horizon)));
+function updateSnapshotAge() {
+  if (!report?.generated_at_utc) return;
+  const builtAt = new Date(report.generated_at_utc).getTime();
+  const ageMinutes = Math.max(0, Math.floor((Date.now() - builtAt) / 60000));
+  const ageText = ageMinutes < 60
+    ? ageMinutes + ' min ago'
+    : Math.floor(ageMinutes / 60) + 'h ' + (ageMinutes % 60) + 'm ago';
+  $('report-age').textContent = 'Historical snapshot · built ' + ageText;
+  const stale = ageMinutes >= 150;
+  $('dataset-status').innerHTML = stale
+    ? '<span class="status-dot" style="background:#f5ac67" aria-hidden="true"></span> Historical report delayed'
+    : '<span class="status-dot" aria-hidden="true"></span> Historical report available';
+}
+async function loadReport() {
   try {
     const response=await fetch('./data/report.json',{cache:'no-store'});
     if(!response.ok) throw new Error(`Report not published (${response.status})`);
     const parsed=await response.json();
     if(!validateReport(parsed)) throw new Error('Report format is invalid');
-    report=parsed;
-    render();
+    if(report?.generated_at_utc !== parsed.generated_at_utc) {
+      report=parsed;
+      render();
+    }
+    updateSnapshotAge();
   } catch(error) {
-    console.info('No historical report yet:', error.message);
+    console.info('Historical report update unavailable:', error.message);
+    if(report) {
+      $('dataset-status').innerHTML='<span class="status-dot" style="background:#f5ac67" aria-hidden="true"></span> Snapshot refresh unavailable';
+      updateSnapshotAge();
+      return;
+    }
     $('dataset-status').innerHTML='<span class="status-dot" style="background:#f5ac67" aria-hidden="true"></span> Awaiting first build';
     $('report-updated').textContent='Pending first build';
     $('horizon-cards').replaceChildren();
     const message=document.createElement('div');message.className='loading-card';
-    message.textContent='The website is ready. Run the GitHub Actions deployment to calculate the first real historical report.';
+    message.textContent='The site will display only valid historical data after a successful report build.';
     $('horizon-cards').append(message);
   }
+}
+function main() {
+  document.querySelectorAll('.horizon-tab').forEach(btn=>btn.addEventListener('click',()=>selectHorizon(btn.dataset.horizon)));
+  loadReport();
+  setInterval(loadReport, 15 * 60 * 1000);
+  setInterval(updateSnapshotAge, 60 * 1000);
+  document.addEventListener('visibilitychange', () => {
+    if(!document.hidden) loadReport();
+  });
 }
 main();

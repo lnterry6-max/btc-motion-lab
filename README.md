@@ -26,7 +26,7 @@ A polished, static GitHub Pages website for analyzing Bitcoin's **past** 5, 15, 
 4. Open **Actions → Update historical report and deploy → Run workflow**. If permissions or Pages are disabled on the repo, enable the necessary permissions and retry.
 5. When the workflow finishes successfully, open `https://YOUR-USERNAME.github.io/btc-motion-lab/` (replace YOUR-USERNAME with your actual GitHub username).
 
-The scheduled workflow attempts an update every six hours at minute 37. GitHub does **not** guarantee exact execution times. A failed market-data request fails the build rather than publishing made-up values. The last successful site remains deployed.
+The scheduled workflow attempts to rebuild the historical report every hour at minute 17 (UTC). An open browser tab checks for a newer historical report every 15 minutes and whenever the tab becomes visible. GitHub does **not** guarantee exact execution times. A failed market-data request fails the build rather than publishing made-up values. The last successful site remains deployed.
 
 ### Push with Git instead of uploading files
 
@@ -83,3 +83,7 @@ This project is for learning data science and evaluating models, not financial, 
 ## Interpreting the new quality checks
 
 Data quality is measured when the static report is built; the browser does not turn it into a live feed. Any incomplete OHLC bar is excluded rather than silently used, and missing intervals stay missing. High model accuracy on one past segment can still fail to generalize. Sliced holdout diagnostics and spaced-out evaluation targets help reveal instability; neither predicts the next market move.
+
+## Refresh behavior
+
+This site is a frequently refreshed **historical research** snapshot, not a live data feed or a current forecast. GitHub Actions schedules an approximately hourly rebuild from completed 5-minute candles and the browser looks for the latest successfully published report every 15 minutes. If a build fails, the previous published report remains visible; the page shows the snapshot timestamp and marks unusually old reports as delayed. There are no real-time wagering signals.

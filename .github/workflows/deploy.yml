@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: '37 */6 * * *'
+    - cron: '17 * * * *'
 
 permissions:
   contents: read
@@ -29,6 +29,8 @@ jobs:
           cache: pip
       - name: Install dependencies
         run: pip install -r requirements.txt
+      - name: Validate dashboard JavaScript
+        run: node --check site/app.js
       - name: Run report tests
         run: python -m unittest discover -s tests -v
       - name: Build actual market report
